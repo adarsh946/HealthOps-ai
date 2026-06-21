@@ -1,1 +1,63 @@
+# ─── Node.js ───────────────────────────────
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.npm
+dist/
+build/
+*.tsbuildinfo
+package-lock.json
+
+# ─── Python ────────────────────────────────
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv/
+*.egg-info/
+.pytest_cache/
+
+# ─── Environment & Secrets ─────────────────
 .env
+.env.local
+.env.*.local
+*.pem
+*.key
+
+# ─── Docker ─────────────────────────────────
+docker-compose.override.yml
+
+# ─── Database ───────────────────────────────
+*.sqlite3
+prisma/migrations/dev.db
+
+# ─── Logs ───────────────────────────────────
+logs/
+*.log
+
+# ─── OS Files ───────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ─── Editor / IDE ───────────────────────────
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# ─── Build Outputs ───────────────────────────
+*.tgz
+coverage/
+.next/
+out/
+
+# ─── Misc ────────────────────────────────────
+.cache/
+tmp/
+temp/

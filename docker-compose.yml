@@ -3,43 +3,43 @@ version: "3.8"
 services:
   # ─── DATABASES ───────────────────────────
   postgres:
-    image: postgres:15
+    image: postgres:18
     environment:
       POSTGRES_DB: healthops
       POSTGRES_USER: admin
       POSTGRES_PASSWORD: secret
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
-      - postgres_data:/var/lib/postgresql/data
+      - postgres_data:/var/lib/postgresql
 
-  mongodb:
-    image: mongo:7
-    ports:
-      - "27017:27017"
-    volumes:
-      - mongo_data:/data/db
+  # mongodb:
+  #   image: mongo:7
+  #   ports:
+  #     - "27017:27017"
+  #   volumes:
+  #     - mongo_data:/data/db
 
   redis:
     image: redis:7-alpine
     ports:
       - "6379:6379"
 
-  qdrant:
-    image: qdrant/qdrant
-    ports:
-      - "6333:6333"
+  # qdrant:
+  #   image: qdrant/qdrant
+  #   ports:
+  #     - "6333:6333"
 
-  # ─── NODE.JS SERVICES ────────────────────
-  api-gateway:
-    build: ./services/api-gateway
-    ports:
-      - "8000:8000"
-    depends_on:
-      - auth-service
-      - patient-service
-    environment:
-      - AUTH_SERVICE_URL=http://auth-service:3001
+  # # ─── NODE.JS SERVICES ────────────────────
+  # api-gateway:
+  #   build: ./services/api-gateway
+  #   ports:
+  #     - "8000:8000"
+  #   depends_on:
+  #     - auth-service
+  #     - patient-service
+  #   environment:
+  #     - AUTH_SERVICE_URL=http://auth-service:3001
 
   auth-service:
     build: ./services/auth-service
@@ -52,35 +52,35 @@ services:
       - DATABASE_URL=postgresql://admin:secret@postgres:5432/healthops
       - REDIS_URL=redis://redis:6379
 
-  notification-service:
-    build: ./services/notification-service
-    ports:
-      - "3002:3002"
-    depends_on:
-      - redis
+  # notification-service:
+  #   build: ./services/notification-service
+  #   ports:
+  #     - "3002:3002"
+  #   depends_on:
+  #     - redis
 
-  # ─── PYTHON SERVICES ─────────────────────
-  patient-service:
-    build: ./services/patient-service
-    ports:
-      - "8001:8001"
-    depends_on:
-      - postgres
-    environment:
-      - DATABASE_URL=postgresql://admin:secret@postgres:5432/healthops
+  # # ─── PYTHON SERVICES ─────────────────────
+  # patient-service:
+  #   build: ./services/patient-service
+  #   ports:
+  #     - "8001:8001"
+  #   depends_on:
+  #     - postgres
+  #   environment:
+  #     - DATABASE_URL=postgresql://admin:secret@postgres:5432/healthops
 
-  ai-agent-service:
-    build: ./services/ai-agent-service
-    ports:
-      - "8002:8002"
-    depends_on:
-      - postgres
-      - redis
-      - qdrant
-    environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - REDIS_URL=redis://redis:6379
+  # ai-agent-service:
+  #   build: ./services/ai-agent-service
+  #   ports:
+  #     - "8002:8002"
+  #   depends_on:
+  #     - postgres
+  #     - redis
+  #     - qdrant
+  #   environment:
+  #     - OPENAI_API_KEY=${OPENAI_API_KEY}
+  #     - REDIS_URL=redis://redis:6379
 
 volumes:
   postgres_data:
-  mongo_data:
+  # mongo_data:
