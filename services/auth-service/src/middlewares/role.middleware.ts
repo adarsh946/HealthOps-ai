@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 
-const requireRole = (allowedRoles: string[]) => {
+export const requireRole = (allowedRoles: string[]) => {
   const roleMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const user = req.user;
 
