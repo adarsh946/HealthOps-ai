@@ -20,6 +20,7 @@ class Patient(Base):
     age: Mapped[int] = mapped_column(Integer, nullable=False)
     gender: Mapped[str] = mapped_column(String, nullable=False)
     contact: Mapped[str] = mapped_column(String, nullable=False)
+    address: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[Optional[str]] = mapped_column(String, nullable=True)
     hospitalId: Mapped[str] = mapped_column(String, nullable=False)
     createdAt: Mapped[datetime] = mapped_column(
