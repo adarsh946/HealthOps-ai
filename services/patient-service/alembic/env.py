@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 from app.models.patient import Base
 import sys
 import os
+from sqlalchemy import text
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 
@@ -58,12 +59,6 @@ def run_migrations_offline() -> None:
 
 
 def run_migrations_online() -> None:
-    """Run migrations in 'online' mode.
-
-    In this scenario we need to create an Engine
-    and associate a connection with the context.
-
-    """
     connectable = engine_from_config(
         config.get_section(config.config_ini_section, {}),
         prefix="sqlalchemy.",
@@ -71,10 +66,21 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
+        connection.execute(text("CREATE SCHEMA IF NOT EXISTS patient"))
+        connection.execute(text("""
+    CREATE TABLE IF NOT EXISTS patient.alembic_version (
+        version_num VARCHAR(32) NOT NULL,
+        CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num)
+    )
+"""))
+        connection.execute(text("SET search_path TO patient"))
+        connection.commit()
         context.configure(
-            connection=connection, target_metadata=target_metadata
+            connection=connection,
+            target_metadata=target_metadata,
+            include_schemas=True,
+            version_table_schema="patient",
         )
-
         with context.begin_transaction():
             context.run_migrations()
 

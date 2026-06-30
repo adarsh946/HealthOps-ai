@@ -11,6 +11,7 @@ from app.config.database import Base
 
 class Patient(Base):
     __tablename__ = "patients"
+    __table_args__ = {"schema": "patient"}
 
     id: Mapped[str] = mapped_column(
         String, primary_key=True, default=lambda: str(uuid4())
