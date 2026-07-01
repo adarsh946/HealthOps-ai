@@ -26,3 +26,12 @@ class PatientResponse(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class PatientUpdate(BaseModel):
+    name: Optional[str] = None
+    age: Optional[int] = None
+    gender: Optional[str] = None
+    contact: Optional[str] = None
+    address: Optional[str] = None
+    email: Optional[str] = None
