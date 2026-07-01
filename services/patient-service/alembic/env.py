@@ -80,6 +80,10 @@ def run_migrations_online() -> None:
             target_metadata=target_metadata,
             include_schemas=True,
             version_table_schema="patient",
+            include_object=lambda obj, name, type_, reflected, compare_to: (
+                True if type_ == "table" and hasattr(obj, "schema") and obj.schema == "patient"
+                else type_ != "table"
+            ),
         )
         with context.begin_transaction():
             context.run_migrations()
