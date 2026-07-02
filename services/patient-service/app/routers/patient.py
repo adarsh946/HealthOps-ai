@@ -70,4 +70,7 @@ async def get_patient(patient_id: str, patient_update: PatientUpdate, db: AsyncS
     for key, value in patient_data.items():
         setattr(patient, key, value)
 
-    return {"message", "patient updated successfully"}
+    await db.commit()
+    await db.refresh(patient)
+
+    return patient
