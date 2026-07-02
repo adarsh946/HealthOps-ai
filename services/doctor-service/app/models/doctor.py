@@ -1,16 +1,11 @@
 from datetime import datetime
 from uuid import uuid4
-from enum import Enum
 
-from sqlalchemy import String, Integer, ForeignKey, func
+from sqlalchemy import String, Integer, DateTime, Enum as SAEnum
 from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.sql import func
+
 from app.config.database import Base
-
-
-class AvailabilityStatus(Enum):
-    ON_DUTY = "ON_DUTY"
-    OFF_DUTY = "OFF_DUTY"
-    ON_LEAVE = "ON_LEAVE"
 
 
 class Doctor(Base):
@@ -18,17 +13,21 @@ class Doctor(Base):
     __table_args__ = {"schema": "doctor"}
 
     id: Mapped[str] = mapped_column(
-        String, primary_key=True, default=lambda: str(uuid4))
+        String, primary_key=True, default=lambda: str(uuid4())
+    )
     name: Mapped[str] = mapped_column(String, nullable=False)
     age: Mapped[int] = mapped_column(Integer, nullable=False)
     gender: Mapped[str] = mapped_column(String, nullable=False)
     email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     specialization: Mapped[str] = mapped_column(String, nullable=False)
-    licensenumber: Mapped[str] = mapped_column(
+    licenseNumber: Mapped[str] = mapped_column(
         String, nullable=False, unique=True)
-    availabilityStatus: Mapped[AvailabilityStatus] = mapped_column(
-        String, default=AvailabilityStatus.OFF_DUTY)
-    hospitalId: Mapped[str] = mapped_column(
-        String, ForeignKey("hosptial.id", ondelete="CASCADE"))
+    availabilityStatus: Mapped[str] = mapped_column(
+        SAEnum("ON_DUTY", "OFF_DUTY", "ON_LEAVE", name="availability_status"),
+        default="OFF_DUTY",
+        nullable=False
+    )
+    hospitalId: Mapped[str] = mapped_column(String, nullable=False)
     createdAt: Mapped[datetime] = mapped_column(
-        server_default=func.now())
+        DateTime, server_default=func.now()
+    )
