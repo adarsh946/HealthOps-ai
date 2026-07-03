@@ -23,7 +23,7 @@ class Doctor(Base):
     licenseNumber: Mapped[str] = mapped_column(
         String, nullable=False, unique=True)
     availabilityStatus: Mapped[str] = mapped_column(
-        SAEnum("ON_DUTY", "OFF_DUTY", "ON_LEAVE", name="availability_status"),
+        String,
         default="OFF_DUTY",
         nullable=False
     )

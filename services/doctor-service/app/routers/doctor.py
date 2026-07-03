@@ -15,25 +15,25 @@ async def create_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_db)
     # TODO: replace hardcoded hospitalId once API Gateway forwards it
     hospital_id = "temp-hospital-id-for-testing"
 
-    new_doctor = doctor(
+    new_doctor = Doctor(
         **doctor.model_dump(),
         hospitalId=hospital_id
     )
 
     db.add(new_doctor)
-    await db.commit
-    await db.refresh()
+    await db.commit()
+    await db.refresh(new_doctor)
 
     return new_doctor
 
 
-@router.get("/", response_model=DoctorResponse)
+@router.get("/", response_model=list[DoctorResponse])
 async def get_all_doctor(db: AsyncSession = Depends(get_db)):
     hospital_id = "temp-hospital-id-for-testing"
 
     result = await db.execute(select(Doctor).where(
         Doctor.hospitalId == hospital_id))
-    doctors = result.scalars().all
+    doctors = result.scalars().all()
 
     return doctors
 
@@ -55,7 +55,7 @@ async def get_doctor(doctor_id: str, db: AsyncSession = Depends(get_db)):
 async def update_doctor(doctor_id: str, update_doctor: DoctorUpdate, db: AsyncSession = Depends(get_db)):
     hospital_id = "temp-hospital-id-for-testing"
 
-    result = await db.execute(select(Doctor).here(Doctor.id == doctor_id, Doctor.hospitalId == hospital_id))
+    result = await db.execute(select(Doctor).where(Doctor.id == doctor_id, Doctor.hospitalId == hospital_id))
     doctor = result.scalar_one_or_none()
 
     if doctor is None:
@@ -64,5 +64,8 @@ async def update_doctor(doctor_id: str, update_doctor: DoctorUpdate, db: AsyncSe
     doctor_data = update_doctor.model_dump(exclude_unset=True)
     for key, value in doctor_data.items():
         setattr(doctor, key, value)
+
+    await db.commit()
+    await db.refresh(doctor)
 
     return doctor

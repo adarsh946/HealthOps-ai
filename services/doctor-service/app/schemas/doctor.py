@@ -17,7 +17,7 @@ class DoctorCreate(BaseModel):
     gender: str
     email: str
     specialization: str
-    licensenumber: str
+    licenseNumber: str
     availabilityStatus: AvailabilityStatus
 
 
@@ -29,10 +29,13 @@ class DoctorResponse(BaseModel):
     gender: str
     email: str
     specialization: str
-    licensenumber: str
+    licenseNumber: str
     availabilityStatus: AvailabilityStatus
     hospitalId: str
     createdAt: datetime
+
+    class Config:
+        from_attributes = True
 
 
 class DoctorUpdate(BaseModel):
@@ -42,5 +45,8 @@ class DoctorUpdate(BaseModel):
     gender: Optional[str] = None
     email: Optional[str] = None
     specialization: Optional[str] = None
-    licensenumber: Optional[str] = None
+    licenseNumber: Optional[str] = None
     availabilityStatus: Optional[AvailabilityStatus] = None
+
+
+DoctorResponse.model_rebuild()
