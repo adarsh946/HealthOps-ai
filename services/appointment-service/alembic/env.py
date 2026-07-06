@@ -41,23 +41,23 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        connection.execute(text("CREATE SCHEMA IF NOT EXISTS doctor"))
+        connection.execute(text("CREATE SCHEMA IF NOT EXISTS appointment"))
         connection.execute(text("""
-            CREATE TABLE IF NOT EXISTS doctor.alembic_version (
+            CREATE TABLE IF NOT EXISTS appointment.alembic_version (
                 version_num VARCHAR(32) NOT NULL,
                 CONSTRAINT alembic_version_pkc PRIMARY KEY (version_num)
             )
         """))
-        connection.execute(text("SET search_path TO doctor"))
+        connection.execute(text("SET search_path TO appointment"))
         connection.commit()
 
         context.configure(
             connection=connection,
             target_metadata=target_metadata,
             include_schemas=True,
-            version_table_schema="doctor",
+            version_table_schema="appointment",
             include_object=lambda obj, name, type_, reflected, compare_to: (
-                True if type_ == "table" and hasattr(obj, "schema") and obj.schema == "doctor"
+                True if type_ == "table" and hasattr(obj, "schema") and obj.schema == "appointment"
                 else type_ != "table"
             ),
         )

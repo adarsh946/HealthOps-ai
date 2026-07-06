@@ -58,3 +58,52 @@ async def create_appointment(appointment: AppointmentCreate, db: AsyncSession = 
     await db.refresh(new_appointment)
 
     return new_appointment
+
+
+@router.get("/{appointment_id}", response_model=AppointmentResponse)
+async def get_appointment(
+    appointment_id: str,
+    db: AsyncSession = Depends(get_db),
+    hospitalId: str = Depends(get_hospital_id)
+):
+    result = await db.execute(
+        select(Appointment).where(
+            Appointment.id == appointment_id,
+            Appointment.hospitalId == hospitalId
+        )
+    )
+    appointment = result.scalar_one_or_none()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+    return appointment
+
+
+@router.get("/", response_model=list[AppointmentResponse])
+async def get_all_appointments(
+    db: AsyncSession = Depends(get_db),
+    hospitalId: str = Depends(get_hospital_id)
+):
+    result = await db.execute(
+        select(Appointment).where(Appointment.hospitalId == hospitalId)
+    )
+    return result.scalars().all()
+
+
+@router.put("/{appointment_id}", response_model=AppointmentResponse)
+async def update_appointment(appointment_id: str,
+                             appointment_update: AppointmentUpdate,
+                             db: AsyncSession = Depends(get_db),
+                             hospitalId: str = Depends(get_hospital_id)):
+
+    result = await db.execute(select(Appointment).where(Appointment.id == appointment_id, Appointment.hospitalId == hospitalId))
+    appointment = result.scalar_one_or_none()
+    if not appointment:
+        raise HTTPException(status_code=404, detail="Appointment not found")
+
+    update_data = appointment_update.model_dump(exclude_unset=True)
+    for key, value in update_data.items():
+        setattr(appointment, key, value)
+
+    await db.commit()
+    await db.refresh(appointment)
+    return appointment
