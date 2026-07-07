@@ -6,7 +6,12 @@ from app.config.database import get_db
 from app.models.appointment import Appointment
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from bullmq import Queue
 
+notification_queue = Queue(
+    "notifications",
+    {"connection": {"host": "localhost", "port": 6379}}
+)
 
 router = APIRouter()
 
@@ -56,6 +61,17 @@ async def create_appointment(appointment: AppointmentCreate, db: AsyncSession = 
     db.add(new_appointment)
     await db.commit()
     await db.refresh(new_appointment)
+
+    await notification_queue.add(
+        "APPOINTMENT_CONFIRMED",
+        {
+            "appointmentId": new_appointment.id,
+            "patientId": new_appointment.patientId,
+            "doctorId": new_appointment.doctorId,
+            "hospitalId": new_appointment.hospitalId,
+            "type": "APPOINTMENT_CONFIRMED"
+        }
+    )
 
     return new_appointment
 
