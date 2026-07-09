@@ -1,3 +1,4 @@
+import datetime
 from fastapi import APIRouter, Depends, HTTPException
 import httpx
 import asyncio
@@ -62,16 +63,36 @@ async def create_appointment(appointment: AppointmentCreate, db: AsyncSession = 
     await db.commit()
     await db.refresh(new_appointment)
 
+   # Push confirmed job (immediate)
     await notification_queue.add(
         "APPOINTMENT_CONFIRMED",
         {
             "appointmentId": new_appointment.id,
             "patientId": new_appointment.patientId,
             "doctorId": new_appointment.doctorId,
-            "hospitalId": new_appointment.hospitalId,
+            "hospitalId": hospital_id,
             "type": "APPOINTMENT_CONFIRMED"
         }
     )
+
+    # Calculate reminder delay
+    scheduled_at = new_appointment.scheduledAt
+    reminder_time = scheduled_at.timestamp() * 1000 - 24 * 60 * 60 * 1000
+    delay = reminder_time - (datetime.now().timestamp() * 1000)
+
+    # Only push reminder if appointment is more than 24hrs away
+    if delay > 0:
+        await notification_queue.add(
+            "APPOINTMENT_REMINDER",
+            {
+                "appointmentId": new_appointment.id,
+                "patientId": new_appointment.patientId,
+                "doctorId": new_appointment.doctorId,
+                "hospitalId": hospital_id,
+                "type": "APPOINTMENT_REMINDER"
+            },
+            {"delay": delay}
+        )
 
     return new_appointment
 

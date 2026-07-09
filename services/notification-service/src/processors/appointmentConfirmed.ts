@@ -23,19 +23,12 @@ export const processAppointmentConfirmed = async (data: {
     const patient = patientResponse.data;
     const doctor = doctorResponse.data;
 
+    const subject = `Appointment Confirmed — HealthOps`;
+    const message = `Hi ${patient.name}, your appointment with Dr. ${doctor.name} has been confirmed. Reference ID: ${appointmentId}. Please arrive 10 minutes early.`;
+
     await Promise.all([
-      sendEmail({
-        to: patient.email,
-        patientName: patient.name,
-        doctorName: doctor.name,
-        appointmentId,
-      }),
-      sendSms({
-        to: patient.phone,
-        patientName: patient.name,
-        doctorName: doctor.name,
-        appointmentId,
-      }),
+      sendEmail({ to: patient.email, subject, message }),
+      sendSms({ to: patient.phone, message }),
     ]);
   } catch (err) {
     console.error("Failed to process APPOINTMENT_CONFIRMED job:", err);
