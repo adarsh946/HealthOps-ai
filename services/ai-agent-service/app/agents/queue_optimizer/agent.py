@@ -6,7 +6,7 @@ from langchain_groq import ChatGroq
 llm = ChatGroq(model=os.getenv("GROQ_MODEL"), temperature=0)
 
 
-def queue_optimizer():
+def queue_optimizer_agent():
     '''Return the queue of patients.'''
 
     graph = create_react_agent(
