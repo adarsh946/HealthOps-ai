@@ -8,9 +8,58 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Logo } from "@/components/Logo";
+import { useAuthStore } from "@/store/authStore";
+import { useRouter } from "next/navigation";
+import api from "@/lib/axios";
 
 export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
+  const [formData, setFormData] = useState({
+    hname: "",
+    haddress: "",
+    hcontact: "",
+    aname: "",
+    aemail: "",
+    apassword: "",
+  });
+  const { setAuth } = useAuthStore();
+  const [error, setError] = useState("");
+
+  const router = useRouter();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setFormData((prev) => ({ ...prev, [e.target.id]: e.target.value }));
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const payload = {
+      name: formData.hname,
+      address: formData.haddress,
+      contact: formData.hcontact,
+      user: {
+        name: formData.aname,
+        email: formData.aemail,
+        password: formData.apassword,
+      },
+    };
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await api.post("/auth/register", payload);
+      const { token, hospitalId, role, user } = response.data;
+      setAuth(token, hospitalId, role, user);
+      document.cookie = "isLoggedIn=true; path=/";
+      router.push("/dashboard");
+    } catch (error: any) {
+      setError(error.response?.data?.message || "Unable to Register");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
     document.title = "Create account — HealthOps AI";
@@ -28,14 +77,7 @@ export default function RegisterPage() {
         <p className="mt-1 text-center text-sm text-gray-500">
           Set up your hospital in a few minutes.
         </p>
-        <form
-          className="mt-6 space-y-6"
-          onSubmit={(e) => {
-            e.preventDefault();
-            setLoading(true);
-            setTimeout(() => setLoading(false), 1000);
-          }}
-        >
+        <form className="mt-6 space-y-6" onSubmit={handleSubmit}>
           <section>
             <h2 className="text-sm font-semibold text-gray-900">
               Hospital info
@@ -43,15 +85,30 @@ export default function RegisterPage() {
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <div className="grid gap-2 sm:col-span-2">
                 <Label htmlFor="hname">Hospital name</Label>
-                <Input id="hname" placeholder="City General Hospital" />
+                <Input
+                  id="hname"
+                  value={formData.hname}
+                  onChange={handleChange}
+                  placeholder="City General Hospital"
+                />
               </div>
               <div className="grid gap-2 sm:col-span-2">
-                <Label htmlFor="haddr">Address</Label>
-                <Input id="haddr" placeholder="123 Care Ave, Springfield" />
+                <Label htmlFor="haddress">Address</Label>
+                <Input
+                  id="haddress"
+                  value={formData.haddress}
+                  onChange={handleChange}
+                  placeholder="123 Care Ave, Springfield"
+                />
               </div>
               <div className="grid gap-2 sm:col-span-2">
                 <Label htmlFor="hcontact">Contact</Label>
-                <Input id="hcontact" placeholder="+1 555 000 0000" />
+                <Input
+                  id="hcontact"
+                  value={formData.hcontact}
+                  onChange={handleChange}
+                  placeholder="+1 555 000 0000"
+                />
               </div>
             </div>
           </section>
@@ -62,22 +119,36 @@ export default function RegisterPage() {
             <div className="mt-3 grid gap-4 sm:grid-cols-2">
               <div className="grid gap-2">
                 <Label htmlFor="aname">Admin name</Label>
-                <Input id="aname" placeholder="Alex Doyle" />
+                <Input
+                  id="aname"
+                  value={formData.aname}
+                  onChange={handleChange}
+                  placeholder="Alex Doyle"
+                />
               </div>
               <div className="grid gap-2">
                 <Label htmlFor="aemail">Admin email</Label>
                 <Input
                   id="aemail"
                   type="email"
+                  value={formData.aemail}
+                  onChange={handleChange}
                   placeholder="alex@hospital.com"
                 />
               </div>
               <div className="grid gap-2 sm:col-span-2">
-                <Label htmlFor="apass">Password</Label>
-                <Input id="apass" type="password" placeholder="••••••••" />
+                <Label htmlFor="apassword">Password</Label>
+                <Input
+                  id="apassword"
+                  type="password"
+                  value={formData.apassword}
+                  onChange={handleChange}
+                  placeholder="••••••••"
+                />
               </div>
             </div>
           </section>
+          {error && <p className="text-sm text-red-500">{error}</p>}
           <Button
             type="submit"
             className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
