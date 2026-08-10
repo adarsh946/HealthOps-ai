@@ -8,7 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Patient } from "@/lib/mock-data";
+import { Patient } from "@/types";
 
 export function PatientTable({ rows }: { rows: Patient[] }) {
   if (rows.length === 0) {

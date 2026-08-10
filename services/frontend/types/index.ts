@@ -1,11 +1,10 @@
 // Enums
 export enum Role {
-  ADMIN = "admin",
-  DOCTOR = "doctor",
-  NURSE = "nurse",
-  RECEPTIONIST = "receptionist",
+  ADMIN = "ADMIN",
+  DOCTOR = "DOCTOR",
+  NURSE = "NURSE",
+  RECEPTIONIST = "RECEPTIONIST",
 }
-
 export enum Status {
   ACTIVE = "active",
   DEACTIVATED = "deactivated",

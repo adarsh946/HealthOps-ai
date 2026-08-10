@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -14,25 +14,39 @@ import {
 import { PageHeader } from "@/components/layout/PageHeader";
 import { PatientTable } from "@/components/patients/PatientTable";
 import { PatientForm } from "@/components/patients/PatientForm";
-import { mockPatients } from "@/lib/mock-data";
+import usePatients from "@/hooks/usePatients";
+import { useAuthStore } from "@/store/authStore";
+import { Role } from "@/types";
 
 export default function PatientsPage() {
   const [open, setOpen] = useState(false);
   const [query, setQuery] = useState("");
 
+  const { patients, loading, error } = usePatients();
+  const { role } = useAuthStore();
+
   useEffect(() => {
     document.title = "Patients — HealthOps AI";
   }, []);
 
+  if (loading)
+    return (
+      <div className="flex justify-center p-10">
+        <Loader2 className="h-6 w-6 animate-spin text-emerald-600" />
+      </div>
+    );
+
+  if (error) return <div className="p-6 text-sm text-red-500">{error}</div>;
+
   const rows = useMemo(() => {
     const q = query.trim().toLowerCase();
-    if (!q) return mockPatients;
-    return mockPatients.filter((p) =>
+    if (!q) return patients;
+    return patients.filter((p) =>
       [p.name, p.email, p.contact, p.address].some((f) =>
-        f.toLowerCase().includes(q)
+        f?.toLowerCase().includes(q)
       )
     );
-  }, [query]);
+  }, [query, patients]);
 
   return (
     <div className="space-y-6">
@@ -40,21 +54,23 @@ export default function PatientsPage() {
         title="Patients"
         description="All patient records across departments."
         actions={
-          <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger
-              render={
-                <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" />
-              }
-            >
-              <Plus className="h-4 w-4" /> Add Patient
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-lg">
-              <DialogHeader>
-                <DialogTitle>Add Patient</DialogTitle>
-              </DialogHeader>
-              <PatientForm onDone={() => setOpen(false)} />
-            </DialogContent>
-          </Dialog>
+          (role === Role.ADMIN || role === Role.RECEPTIONIST) && (
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger
+                render={
+                  <Button className="bg-emerald-600 hover:bg-emerald-700 text-white" />
+                }
+              >
+                <Plus className="h-4 w-4" /> Add Patient
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-lg">
+                <DialogHeader>
+                  <DialogTitle>Add Patient</DialogTitle>
+                </DialogHeader>
+                <PatientForm onDone={() => setOpen(false)} />
+              </DialogContent>
+            </Dialog>
+          )
         }
       />
       <div className="relative max-w-sm">
