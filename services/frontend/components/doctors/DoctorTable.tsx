@@ -9,8 +9,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import type { Doctor } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { Doctor } from "@/types";
 
 const statusCls: Record<Doctor["status"], string> = {
   available: "bg-emerald-100 text-emerald-700",

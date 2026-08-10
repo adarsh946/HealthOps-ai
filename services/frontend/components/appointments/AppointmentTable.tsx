@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { StatusBadge } from "./StatusBadge";
-import type { Appointment } from "@/lib/mock-data";
 import { cn } from "@/lib/utils";
+import { Appointment } from "@/types";
 
 const urgencyCls: Record<number, string> = {
   1: "bg-gray-100 text-gray-700",
@@ -60,9 +60,9 @@ export function AppointmentTable({ rows }: { rows: Appointment[] }) {
           {rows.map((r) => (
             <TableRow key={r.id}>
               <TableCell className="font-medium text-gray-900">
-                {r.patient}
+                {r.patientId}
               </TableCell>
-              <TableCell className="text-gray-600">{r.doctor}</TableCell>
+              <TableCell className="text-gray-600">{r.doctorId}</TableCell>
               <TableCell className="text-gray-600">
                 {formatDT(r.scheduledAt)}
               </TableCell>
