@@ -76,17 +76,21 @@ export interface Appointment {
   updatedAt: string;
 }
 
+// export interface QueueItem {
+//   appointmentId: string;
+//   patientId: string;
+//   patientName: string;
+//   urgency: number;
+//   status: AppointmentStatus;
+//   scheduledAt: string;
+//   waitTime: number;
+//   position: number;
+// }
+
 export interface QueueItem {
   appointmentId: string;
-  patientId: string;
-  patientName: string;
-  urgency: number;
-  status: AppointmentStatus;
-  scheduledAt: string;
-  waitTime: number;
   position: number;
 }
-
 export interface QueueUpdate {
   orderedQueue: QueueItem[];
   reasoning: string;

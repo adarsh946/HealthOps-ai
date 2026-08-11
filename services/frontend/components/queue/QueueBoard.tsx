@@ -1,6 +1,6 @@
 import { Users } from "lucide-react";
 import { QueueCard } from "./QueueCard";
-import type { QueueItem } from "@/lib/mock-data";
+import { QueueItem } from "@/types";
 
 export function QueueBoard({ items }: { items: QueueItem[] }) {
   if (items.length === 0) {
@@ -19,7 +19,7 @@ export function QueueBoard({ items }: { items: QueueItem[] }) {
   return (
     <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
       {items.map((item) => (
-        <QueueCard key={item.id} item={item} />
+        <QueueCard key={item.appointmentId} item={item} />
       ))}
     </div>
   );

@@ -4,16 +4,23 @@ import { useState } from "react";
 import { Sparkles, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-export function OptimizeButton() {
+export function OptimizeButton({
+  onOptimize,
+}: {
+  onOptimize: () => Promise<void>;
+}) {
   const [loading, setLoading] = useState(false);
+
+  const handleClick = async () => {
+    setLoading(true);
+    await onOptimize();
+    setLoading(false);
+  };
   return (
     <Button
       className="bg-emerald-600 hover:bg-emerald-700 text-white"
       disabled={loading}
-      onClick={() => {
-        setLoading(true);
-        setTimeout(() => setLoading(false), 1500);
-      }}
+      onClick={handleClick}
     >
       {loading ? (
         <Loader2 className="h-4 w-4 animate-spin" />
