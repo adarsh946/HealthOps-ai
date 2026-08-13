@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+"use client";
 import Link from "next/link";
 import {
   Users,
@@ -14,13 +14,10 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { PageHeader } from "@/components/layout/PageHeader";
 import { AppointmentTable } from "@/components/appointments/AppointmentTable";
-import { dashboardStats, mockAppointments } from "@/lib/mock-data";
-
-export const metadata: Metadata = {
-  title: "Dashboard — HealthOps AI",
-  description:
-    "Live overview of hospital operations, queues, and appointments.",
-};
+import { dashboardStats } from "@/lib/mock-data";
+import { useEffect } from "react";
+import { useAuthStore } from "@/store/authStore";
+import useAppointments from "@/hooks/useAppointments";
 
 const stats = [
   {
@@ -54,10 +51,16 @@ const stats = [
 ];
 
 export default function DashboardPage() {
+  const { user } = useAuthStore();
+  const { appointments } = useAppointments();
+
+  useEffect(() => {
+    document.title = "Dashboard — HealthOps AI";
+  }, []);
   return (
     <div className="space-y-6">
       <PageHeader
-        title="Welcome back, Alex"
+        title={`Welcome back, ${user?.name ?? "Admin"}`}
         description="Here's what's happening across your hospital today."
       />
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
@@ -111,7 +114,7 @@ export default function DashboardPage() {
             View all
           </Link>
         </div>
-        <AppointmentTable rows={mockAppointments.slice(0, 5)} />
+        <AppointmentTable rows={appointments.slice(0, 5)} />
       </div>
     </div>
   );
