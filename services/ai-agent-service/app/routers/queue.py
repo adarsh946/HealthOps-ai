@@ -15,7 +15,8 @@ async def optimize_queue(request: Request):
         hospital_id = request.headers.get("X-Hospital-Id")
 
         if not hospital_id:
-            return HTTPException(status_code=400, detail="Header 'x-hospital-id' is missing or invalid.")
+            raise HTTPException(
+                status_code=400, detail="Header 'x-hospital-id' is missing or invalid.")
 
         graph = queue_optimizer_agent()
         response = graph.invoke({
