@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from sqlalchemy.ext.asyncio import AsyncSession
 from app.schemas.patient import PatientCreate, PatientResponse, PatientUpdate
 from app.models.patient import Patient
@@ -9,10 +9,16 @@ from sqlalchemy import select
 router = APIRouter()
 
 
+def get_hospital_id(request: Request) -> str:
+    hospital_id = request.headers.get("X-Hospital-Id")
+    if not hospital_id:
+        raise HTTPException(
+            status_code=400, detail="X-Hospital-Id header missing")
+    return hospital_id
+
+
 @router.post("/", response_model=PatientResponse)
-async def create_patient(patient: PatientCreate, db: AsyncSession = Depends(get_db)):
-    # TODO: replace hardcoded hospitalId once API Gateway forwards it
-    hospital_id = "temp-hospital-id-for-testing"
+async def create_patient(patient: PatientCreate, db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     new_patient = Patient(
         **patient.model_dump(),
@@ -27,8 +33,7 @@ async def create_patient(patient: PatientCreate, db: AsyncSession = Depends(get_
 
 
 @router.get("/", response_model=list[PatientResponse])
-async def get_all_patients(db: AsyncSession = Depends(get_db)):
-    hospital_id = "temp-hospital-id-for-testing"
+async def get_all_patients(db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     result = await db.execute(select(Patient).where(
         Patient.hospitalId == hospital_id))
@@ -38,9 +43,7 @@ async def get_all_patients(db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/{patient_id}", response_model=PatientResponse)
-async def get_patient(patient_id: str, db: AsyncSession = Depends(get_db)):
-
-    hospital_id = "temp-hospital-id-for-testing"
+async def get_patient(patient_id: str, db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     result = await db.execute(select(Patient).where(Patient.id == patient_id, Patient.hospitalId == hospital_id))
     patient = result.scalar_one_or_none()
@@ -52,8 +55,7 @@ async def get_patient(patient_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.put("/{patient_id}", response_model=PatientResponse)
-async def get_patient(patient_id: str, patient_update: PatientUpdate, db: AsyncSession = Depends(get_db)):
-    hospital_id = "temp-hospital-id-for-testing"
+async def get_patient(patient_id: str, patient_update: PatientUpdate, db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     result = await db.execute(
         select(Patient).where(

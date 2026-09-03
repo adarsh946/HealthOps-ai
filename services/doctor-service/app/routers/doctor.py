@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends
-from fastapi import HTTPException
+from fastapi import HTTPException, Request
 from app.schemas.doctor import DoctorCreate, DoctorResponse, DoctorUpdate
 from app.config.database import get_db
 from app.models.doctor import Doctor
@@ -10,10 +10,16 @@ from sqlalchemy import select
 router = APIRouter()
 
 
+def get_hospital_id(request: Request) -> str:
+    hospital_id = request.headers.get("X-Hospital-Id")
+    if not hospital_id:
+        raise HTTPException(
+            status_code=400, detail="X-Hospital-Id header missing")
+    return hospital_id
+
+
 @router.post("/", response_model=DoctorResponse)
-async def create_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_db)):
-    # TODO: replace hardcoded hospitalId once API Gateway forwards it
-    hospital_id = "temp-hospital-id-for-testing"
+async def create_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     new_doctor = Doctor(
         **doctor.model_dump(),
@@ -28,8 +34,7 @@ async def create_doctor(doctor: DoctorCreate, db: AsyncSession = Depends(get_db)
 
 
 @router.get("/", response_model=list[DoctorResponse])
-async def get_all_doctor(db: AsyncSession = Depends(get_db)):
-    hospital_id = "temp-hospital-id-for-testing"
+async def get_all_doctor(db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     result = await db.execute(select(Doctor).where(
         Doctor.hospitalId == hospital_id))
@@ -39,8 +44,7 @@ async def get_all_doctor(db: AsyncSession = Depends(get_db)):
 
 
 @router.get("/{doctor_id}", response_model=DoctorResponse)
-async def get_doctor(doctor_id: str, db: AsyncSession = Depends(get_db)):
-    hospital_id = "temp-hospital-id-for-testing"
+async def get_doctor(doctor_id: str, db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     result = await db.execute(select(Doctor).where(Doctor.id == doctor_id, Doctor.hospitalId == hospital_id))
     doctor = result.scalar_one_or_none()
@@ -52,8 +56,7 @@ async def get_doctor(doctor_id: str, db: AsyncSession = Depends(get_db)):
 
 
 @router.put("/{doctor_id}", response_model=DoctorResponse)
-async def update_doctor(doctor_id: str, update_doctor: DoctorUpdate, db: AsyncSession = Depends(get_db)):
-    hospital_id = "temp-hospital-id-for-testing"
+async def update_doctor(doctor_id: str, update_doctor: DoctorUpdate, db: AsyncSession = Depends(get_db), hospital_id: str = Depends(get_hospital_id)):
 
     result = await db.execute(select(Doctor).where(Doctor.id == doctor_id, Doctor.hospitalId == hospital_id))
     doctor = result.scalar_one_or_none()

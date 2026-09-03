@@ -20,6 +20,10 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(passport.initialize());
 
+app.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", service: "auth-service" });
+});
+
 app.use("/api/v1/auth", authRoute);
 app.use("/api/v1/staff", staffRoute);
 app.use("/api/v1/hospital", hospitalRoute);

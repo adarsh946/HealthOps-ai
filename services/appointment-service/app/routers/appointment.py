@@ -1,5 +1,5 @@
-import datetime
-from fastapi import APIRouter, Depends, HTTPException
+from datetime import datetime
+from fastapi import APIRouter, Depends, HTTPException, Request
 import httpx
 import asyncio
 from app.schemas.appointment import AppointmentCreate, AppointmentResponse, AppointmentUpdate, AppointmentStatus
@@ -8,21 +8,29 @@ from app.models.appointment import Appointment
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from bullmq import Queue
+import os
+
+
+REDIS_URL = os.getenv("REDIS_URL", "redis://localhost:6379")
 
 notification_queue = Queue(
     "notifications",
-    {"connection": {"host": "localhost", "port": 6379}}
+    {"connection": REDIS_URL}
 )
 
 router = APIRouter()
 
 
-PATIENT_SERVICE_URL = "http://localhost:8001"
-DOCTOR_SERVICE_URL = "http://localhost:8002"
+PATIENT_SERVICE_URL = os.getenv("PATIENT_SERVICE_URL", "http://localhost:8001")
+DOCTOR_SERVICE_URL = os.getenv("DOCTOR_SERVICE_URL", "http://localhost:8002")
 
 
-def get_hospital_id() -> str:
-    return "temp-hospital-id-for-testing"
+def get_hospital_id(request: Request) -> str:
+    hospital_id = request.headers.get("X-Hospital-Id")
+    if not hospital_id:
+        raise HTTPException(
+            status_code=400, detail="X-Hospital-Id header missing")
+    return hospital_id
 
 
 async def validate_patient(patient_id: str, hospital_id: str):
