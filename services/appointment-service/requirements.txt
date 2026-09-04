@@ -3,6 +3,7 @@ uvicorn[standard]
 sqlalchemy
 asyncpg
 httpx
+bullmq
 alembic
 psycopg2-binary
 python-dotenv
