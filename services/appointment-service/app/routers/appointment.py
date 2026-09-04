@@ -7,7 +7,7 @@ from app.config.database import get_db
 from app.models.appointment import Appointment
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from bullmq import Queue
+from bullmq import Queue  # type: ignore
 import os
 
 
