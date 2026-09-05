@@ -2,8 +2,9 @@ import { Clock } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { QueueItem } from "@/lib/mock-data";
+
 import { cn } from "@/lib/utils";
+import { QueueItem } from "@/types";
 
 const urgencyStyles: Record<
   number,

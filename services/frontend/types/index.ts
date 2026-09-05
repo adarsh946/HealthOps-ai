@@ -92,7 +92,17 @@ export interface Appointment {
 
 export interface QueueItem {
   appointmentId: string;
+  patientId: string;
+  patientName: string;
+  urgency: number;
+  status: string;
+  scheduledAt: string;
+  waitTime: number;
   position: number;
+  // fields QueueCard uses:
+  patient: string;
+  waitMinutes: number;
+  id: string;
 }
 export interface QueueUpdate {
   orderedQueue: QueueItem[];
