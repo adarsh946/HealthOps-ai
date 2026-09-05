@@ -51,16 +51,19 @@ export interface Patient {
   updatedAt: string;
 }
 
+export type DoctorStatus = "ON_DUTY" | "OFF_DUTY" | "ON_LEAVE";
+
 export interface Doctor {
   id: string;
   name: string;
+  age: number;
+  gender: string;
   email: string;
   specialization: string;
   licenseNumber: string;
-  availabilityStatus: string;
+  availabilityStatus: DoctorStatus;
   hospitalId: string;
   createdAt: string;
-  updatedAt: string;
 }
 
 export interface Appointment {

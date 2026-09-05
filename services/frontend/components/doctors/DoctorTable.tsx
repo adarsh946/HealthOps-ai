@@ -10,17 +10,18 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { cn } from "@/lib/utils";
-import { Doctor } from "@/types";
+import { Doctor, DoctorStatus } from "@/types";
 
-const statusCls: Record<Doctor["status"], string> = {
-  available: "bg-emerald-100 text-emerald-700",
-  busy: "bg-orange-100 text-orange-700",
-  off_duty: "bg-gray-100 text-gray-600",
+const statusCls: Record<DoctorStatus, string> = {
+  ON_DUTY: "bg-emerald-100 text-emerald-700",
+  OFF_DUTY: "bg-gray-100 text-gray-600",
+  ON_LEAVE: "bg-orange-100 text-orange-700",
 };
-const statusLabel: Record<Doctor["status"], string> = {
-  available: "Available",
-  busy: "Busy",
-  off_duty: "Off Duty",
+
+const statusLabel: Record<DoctorStatus, string> = {
+  ON_DUTY: "On Duty",
+  OFF_DUTY: "Off Duty",
+  ON_LEAVE: "On Leave",
 };
 
 export function DoctorTable({ rows }: { rows: Doctor[] }) {
@@ -58,13 +59,16 @@ export function DoctorTable({ rows }: { rows: Doctor[] }) {
               <TableCell className="text-gray-600">
                 {d.specialization}
               </TableCell>
-              <TableCell className="text-gray-600">{d.license}</TableCell>
+              <TableCell className="text-gray-600">{d.licenseNumber}</TableCell>
               <TableCell>
                 <Badge
                   variant="secondary"
-                  className={cn("border-0 font-medium", statusCls[d.status])}
+                  className={cn(
+                    "border-0 font-medium",
+                    statusCls[d.availabilityStatus]
+                  )}
                 >
-                  {statusLabel[d.status]}
+                  {statusLabel[d.availabilityStatus]}
                 </Badge>
               </TableCell>
               <TableCell className="text-right">
