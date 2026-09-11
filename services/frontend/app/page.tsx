@@ -1,3 +1,5 @@
+"use client";
+
 import { useState, type ElementType } from "react";
 import Link from "next/link";
 import {
@@ -405,7 +407,7 @@ function TechPill({ name, icon: Icon }: { name: string; icon: ElementType }) {
   );
 }
 
-function LandingPage() {
+export default function LandingPage() {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="min-h-screen overflow-x-hidden bg-background font-sans text-foreground">
