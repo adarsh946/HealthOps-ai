@@ -7,4 +7,5 @@ export const SERVICES = {
   DOCTOR: process.env.DOCTOR_SERVICE_URL || "http://localhost:8002",
   APPOINTMENT: process.env.APPOINTMENT_SERVICE_URL || "http://localhost:8003",
   NOTIFICATION: process.env.NOTIFICATION_SERVICE_URL || "http://localhost:3002",
+  AI_AGENT: process.env.AI_AGENT_SERVICE_URL || "http://localhost:8004",
 };

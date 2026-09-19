@@ -18,7 +18,7 @@ const corsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-app.use("/api", proxyRouter);
+app.use("/", proxyRouter);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`API Gateway running on port ${PORT}`));

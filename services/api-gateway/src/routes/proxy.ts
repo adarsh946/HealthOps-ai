@@ -13,6 +13,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.PATIENT,
     changeOrigin: true,
+    pathRewrite: { "^/patients": "/api/v1/patients" },
     on: {
       proxyReq: (proxyReq, req) => {
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
@@ -28,6 +29,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.DOCTOR,
     changeOrigin: true,
+    pathRewrite: { "^/doctors": "/api/v1/doctors" },
     on: {
       proxyReq: (proxyReq, req) => {
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
@@ -43,6 +45,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.APPOINTMENT,
     changeOrigin: true,
+    pathRewrite: { "^/appointments": "/api/v1/appointments" },
     on: {
       proxyReq: (proxyReq, req) => {
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
@@ -57,6 +60,21 @@ route.use(
     target: SERVICES.AUTH,
     changeOrigin: true,
     pathRewrite: { "^/auth": "/api/v1/auth" },
+  })
+);
+
+route.use(
+  "/ai-agent",
+  authMiddleware,
+  createProxyMiddleware({
+    target: SERVICES.AI_AGENT,
+    changeOrigin: true,
+    pathRewrite: { "^/ai-agent/optimize-queue": "/api/queue/optimize" },
+    on: {
+      proxyReq: (proxyReq, req) => {
+        proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
+      },
+    },
   })
 );
 
