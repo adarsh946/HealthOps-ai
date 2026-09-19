@@ -13,7 +13,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.PATIENT,
     changeOrigin: true,
-    pathRewrite: { "^/patients": "/api/v1/patients" },
+    pathRewrite: { "^/": "/api/v1/patients/" },
     on: {
       proxyReq: (proxyReq, req) => {
         fixRequestBody(proxyReq, req);
@@ -30,7 +30,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.DOCTOR,
     changeOrigin: true,
-    pathRewrite: { "^/doctors": "/api/v1/doctors" },
+    pathRewrite: { "^/": "/api/v1/doctors/" },
     on: {
       proxyReq: (proxyReq, req) => {
         fixRequestBody(proxyReq, req);
@@ -47,7 +47,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.APPOINTMENT,
     changeOrigin: true,
-    pathRewrite: { "^/appointments": "/api/v1/appointments" },
+    pathRewrite: { "^/": "/api/v1/appointments/" },
     on: {
       proxyReq: (proxyReq, req) => {
         fixRequestBody(proxyReq, req);
@@ -62,7 +62,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.AUTH,
     changeOrigin: true,
-    pathRewrite: { "^/auth": "/api/v1/auth" },
+    pathRewrite: { "^/": "/api/v1/auth/" },
     on: {
       proxyReq: (proxyReq, req) => {
         fixRequestBody(proxyReq, req);
@@ -77,7 +77,7 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.AI_AGENT,
     changeOrigin: true,
-    pathRewrite: { "^/ai-agent/optimize-queue": "/api/queue/optimize" },
+    pathRewrite: { "^/optimize-queue": "/api/queue/optimize" },
     on: {
       proxyReq: (proxyReq, req) => {
         fixRequestBody(proxyReq, req);
