@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { createProxyMiddleware } from "http-proxy-middleware";
+import { createProxyMiddleware, fixRequestBody } from "http-proxy-middleware";
 import { authMiddleware } from "../middleware/auth";
 import { requireRole } from "../middleware/rbac";
 import { SERVICES } from "../config/services";
@@ -16,6 +16,7 @@ route.use(
     pathRewrite: { "^/patients": "/api/v1/patients" },
     on: {
       proxyReq: (proxyReq, req) => {
+        fixRequestBody(proxyReq, req);
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
       },
     },
@@ -32,6 +33,7 @@ route.use(
     pathRewrite: { "^/doctors": "/api/v1/doctors" },
     on: {
       proxyReq: (proxyReq, req) => {
+        fixRequestBody(proxyReq, req);
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
       },
     },
@@ -48,6 +50,7 @@ route.use(
     pathRewrite: { "^/appointments": "/api/v1/appointments" },
     on: {
       proxyReq: (proxyReq, req) => {
+        fixRequestBody(proxyReq, req);
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
       },
     },
@@ -60,6 +63,11 @@ route.use(
     target: SERVICES.AUTH,
     changeOrigin: true,
     pathRewrite: { "^/auth": "/api/v1/auth" },
+    on: {
+      proxyReq: (proxyReq, req) => {
+        fixRequestBody(proxyReq, req);
+      },
+    },
   })
 );
 
@@ -72,6 +80,7 @@ route.use(
     pathRewrite: { "^/ai-agent/optimize-queue": "/api/queue/optimize" },
     on: {
       proxyReq: (proxyReq, req) => {
+        fixRequestBody(proxyReq, req);
         proxyReq.setHeader("X-Hospital-Id", req.hospitalId || "");
       },
     },
