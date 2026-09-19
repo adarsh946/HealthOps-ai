@@ -24,9 +24,9 @@ app.get("/health", (req, res) => {
   res.status(200).json({ status: "ok", service: "auth-service" });
 });
 
-app.use("/api/v1/auth", authRoute);
-app.use("/api/v1/staff", staffRoute);
-app.use("/api/v1/hospital", hospitalRoute);
+app.use("/auth", authRoute);
+app.use("/staff", staffRoute);
+app.use("/hospital", hospitalRoute);
 
 app.listen(process.env.PORT, () => {
   console.log(`Server running on ${process.env.PORT}`);

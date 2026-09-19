@@ -62,7 +62,6 @@ route.use(
   createProxyMiddleware({
     target: SERVICES.AUTH,
     changeOrigin: true,
-    pathRewrite: { "^/": "/api/v1/auth/" },
     on: {
       proxyReq: (proxyReq, req) => {
         fixRequestBody(proxyReq, req);
