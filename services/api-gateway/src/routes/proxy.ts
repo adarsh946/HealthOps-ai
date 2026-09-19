@@ -71,6 +71,19 @@ route.use(
 );
 
 route.use(
+  "/hospital",
+  createProxyMiddleware({
+    target: SERVICES.AUTH,
+    changeOrigin: true,
+    on: {
+      proxyReq: (proxyReq, req) => {
+        fixRequestBody(proxyReq, req);
+      },
+    },
+  })
+);
+
+route.use(
   "/ai-agent",
   authMiddleware,
   createProxyMiddleware({
