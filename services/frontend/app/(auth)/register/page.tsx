@@ -49,7 +49,7 @@ export default function RegisterPage() {
     setError("");
 
     try {
-      const response = await api.post("/auth/register", payload);
+      const response = await api.post("/hospital/register", payload);
       const { token, hospitalId, role, user } = response.data;
       setAuth(token, hospitalId, role, user);
       document.cookie = "isLoggedIn=true; path=/";
