@@ -90,25 +90,6 @@ export default function LoginPage() {
           >
             {loading && <Loader2 className="h-4 w-4 animate-spin" />}
             Sign In
-          </Button>{" "}
-          <div className="grid gap-2">
-            <Label htmlFor="password">Password</Label>
-            <Input
-              id="password"
-              value={formData.password}
-              onChange={handleChange}
-              type="password"
-              placeholder="••••••••"
-            />
-          </div>
-          {error && <p className="text-sm text-red-500">{error}</p>}
-          <Button
-            type="submit"
-            className="w-full bg-emerald-600 hover:bg-emerald-700 text-white"
-            disabled={loading}
-          >
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            Sign In
           </Button>
         </form>
         <p className="mt-6 text-center text-sm text-gray-500">
