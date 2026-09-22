@@ -58,20 +58,7 @@ route.use(
 );
 
 route.use(
-  "/auth",
-  createProxyMiddleware({
-    target: SERVICES.AUTH,
-    changeOrigin: true,
-    on: {
-      proxyReq: (proxyReq, req) => {
-        fixRequestBody(proxyReq, req);
-      },
-    },
-  })
-);
-
-route.use(
-  "/hospital",
+  "/",
   createProxyMiddleware({
     target: SERVICES.AUTH,
     changeOrigin: true,
