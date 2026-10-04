@@ -7,6 +7,6 @@ app = FastAPI()
 app.include_router(doctor.router, prefix="/api/v1/doctors", tags=["doctors"])
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health():
-    return {"status": "ok", "service": "patient-service"}
+    return {"status": "ok"}

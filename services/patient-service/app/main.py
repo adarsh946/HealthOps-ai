@@ -7,6 +7,6 @@ app.include_router(
     patient.router, prefix="/api/v1/patients", tags=["patients"])
 
 
-@app.get("/health")
-def healthCheck():
-    return {"status": "ok", "service": "patient service"}
+@app.api_route("/health", methods=["GET", "HEAD"])
+async def health():
+    return {"status": "ok"}
