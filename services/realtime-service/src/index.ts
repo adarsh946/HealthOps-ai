@@ -18,6 +18,10 @@ expressApp.post("/broadcast/queue", (req: any, res: any) => {
   return res.json({ success: true });
 });
 
+expressApp.get("/health", (req, res) => {
+  res.status(200).json({ status: "ok", service: "auth-service" });
+});
+
 const server = http.createServer(expressApp);
 initializeSocket(server);
 

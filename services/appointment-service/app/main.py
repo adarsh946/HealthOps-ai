@@ -8,6 +8,6 @@ app.include_router(
     appointment.router, prefix="/api/v1/appointments", tags=["appointments"])
 
 
-@app.get("/health")
+@app.api_route("/health", methods=["GET", "HEAD"])
 async def health():
-    return {"status": "ok", "service": "patient-service"}
+    return {"status": "ok"}
