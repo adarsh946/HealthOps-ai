@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { useAuthStore } from "@/store/authStore";
 import { Appointment } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -6,8 +7,11 @@ const useAppointments = () => {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const token = useAuthStore((state) => state.token);
 
   useEffect(() => {
+    if (!token) return;
+
     const fetchAppointments = async () => {
       setError("");
       setLoading(true);
@@ -24,7 +28,7 @@ const useAppointments = () => {
       }
     };
     fetchAppointments();
-  }, []);
+  }, [token]);
 
   return { appointments, loading, error };
 };

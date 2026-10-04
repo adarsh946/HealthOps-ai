@@ -1,4 +1,5 @@
 import api from "@/lib/axios";
+import { useAuthStore } from "@/store/authStore"; // ← add
 import { Patient } from "@/types";
 import { useEffect, useState } from "react";
 
@@ -6,8 +7,11 @@ const usePatients = () => {
   const [patients, setPatients] = useState<Patient[]>([]);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const token = useAuthStore((state) => state.token); // ← add
 
   useEffect(() => {
+    if (!token) return; // ← add
+
     const fetchPatients = async () => {
       setError("");
       setLoading(true);
@@ -22,7 +26,7 @@ const usePatients = () => {
       }
     };
     fetchPatients();
-  }, []);
+  }, [token]); // ← change [] to [token]
 
   return { patients, loading, error };
 };
